@@ -1,8 +1,8 @@
 ![URegistry Banner](https://github.com/Margoovian/URegistry/blob/main/res/URegistryBanner.png)
 
-# URegistry — A Reflection‑Driven Plugin Registry for .NET
+# URegistry - A ReflectionDriven Plugin Registry for .NET
 
-> **Goal:** Provide a simple, strongly‑typed way to build plugin systems via reflection, with attribute‑based discovery, a lightweight dependency graph, and clean lifecycle hooks.
+> **Goal:** Provide a simple, stronglytyped way to build plugin systems via reflection, with attributebased discovery, a lightweight dependency graph, and clean lifecycle hooks.
 
 ## TL;DR
 
@@ -16,11 +16,11 @@
 
 ## Why URegistry?
 
-- **Attribute‑based discovery.** Mark your plugin class with `[PluginIdentity]` to make it discoverable. The unique plugin ID comes from `IdPath.Name` lower‑cased with spaces converted to underscores (e.g., `The Path` + `My Plugin` → `the_path.my_plugin`). fileciteturn1file30L65-L73  
-- **Soft dependency model.** Express dependencies with `[PluginRequires("other_plugin_id")]`. The registry builds a dependency graph and ensures requirements are **loaded/mounted** before your plugin runs. fileciteturn1file31L14-L24 fileciteturn1file27L67-L82  
-- **Simple lifecycle.** The registry calls `OnMount()` → `OnInitialized()` → `Verify()`. If verification fails, the plugin is flagged; otherwise it’s marked ready. fileciteturn1file26L43-L75 fileciteturn1file26L77-L106  
-- **Centralized logging.** Initialize once, log everywhere—plugins can log via `BasePlugin.Log(...)`; the registry uses the same logger under the hood. fileciteturn1file24L7-L36 fileciteturn1file29L13-L28  
-- **Collectible loading & clean unloads.** Plugin assemblies are loaded into collectible `AssemblyLoadContext`s and disposed with the registry. fileciteturn1file28L10-L24 fileciteturn1file26L183-L219
+- **Attributebased discovery.** Mark your plugin class with `[PluginIdentity]` to make it discoverable. The unique plugin ID comes from `IdPath.Name` lowercased with spaces converted to underscores (e.g., `The Path` + `My Plugin` -> `the_path.my_plugin`). 
+- **Soft dependency model.** Express dependencies with `[PluginRequires("other_plugin_id")]`. The registry builds a dependency graph and ensures requirements are **loaded/mounted** before your plugin runs. 
+- **Simple lifecycle.** The registry calls `OnMount()` -> `OnInitialized()` -> `Verify()`. If verification fails, the plugin is flagged; otherwise it's marked ready. 
+- **Centralized logging.** Initialize once, log everywhere-plugins can log via `BasePlugin.Log(...)`; the registry uses the same logger under the hood. 
+- **Collectible loading & clean unloads.** Plugin assemblies are loaded into collectible `AssemblyLoadContext`s and disposed with the registry. 
 
 ---
 
@@ -32,17 +32,17 @@ Annotate your concrete plugin class with `[PluginIdentity]`:
 
 ```csharp
 [PluginIdentity(
-    PluginType = typeof(MyPlugin),
-    Name = "My_Plugin",
-    IdPath = "My_Product",
-    Authors = new[] { "Your Name" },
-    MajorVersion = 1, MinorVersion = 0, PatchVersion = 0
+ PluginType = typeof(MyPlugin),
+ Name = "My_Plugin",
+ IdPath = "My_Product",
+ Authors = new[] { "Your Name" },
+ MajorVersion = 1, MinorVersion = 0, PatchVersion = 0
 )]
 public sealed class MyPlugin : BasePlugin, IMyPlugin { /* ... */ }
 ```
 
-- The generated ID is `my_product.my_plugin` (lower‑case, spaces → `_`). Use this in dependencies. fileciteturn1file30L65-L73
-- Version is composed as `Major.Minor.Patch`. fileciteturn1file30L55-L63
+- The generated ID is `my_product.my_plugin` (lowercase, spaces -> `_`). Use this in dependencies. 
+- Version is composed as `Major.Minor.Patch`. 
 
 ### Declaring Dependencies
 
@@ -50,26 +50,26 @@ Add `[PluginRequires]` with one or more plugin IDs. The dependency graph ensures
 
 ```csharp
 [PluginRequires(
-    "my_product.some_required_plugin",
-    "another_path.another_plugin"
+ "my_product.some_required_plugin",
+ "another_path.another_plugin"
 )]
 public sealed class MyPlugin : BasePlugin, IMyPlugin { /* ... */ }
 ```
 
-Under the hood, the graph connects nodes by ID and checks each dependency’s state (`Loaded`, `Mounted`, `Initialized`). fileciteturn1file27L1-L14 fileciteturn1file27L112-L129
+Under the hood, the graph connects nodes by ID and checks each dependency's state (`Loaded`, `Mounted`, `Initialized`). 
 
 ### Plugin Lifecycle
 
 Your plugin implements the `IPlugin` lifecycle used by the registry:
 
-- `OnMount()` — created via reflection; return `true` to mount. fileciteturn1file26L43-L75  
-- `OnInitialized()` — called after mounting; safe place to wire runtime behavior. fileciteturn1file26L77-L92  
-- `Verify()` — registry calls this last; must return `true` for the plugin to be marked ready. fileciteturn1file26L94-L106  
-- `OnUnmount()` / `OnDeinitialized()` — optional teardown hooks (see demo plugins). fileciteturn1file37L31-L49
+- `OnMount()` - created via reflection; return `true` to mount. 
+- `OnInitialized()` - called after mounting; safe place to wire runtime behavior. 
+- `Verify()` - registry calls this last; must return `true` for the plugin to be marked ready. 
+- `OnUnmount()` / `OnDeinitialized()` - optional teardown hooks (see demo plugins). 
 
-Use `BasePlugin.Log(...)` for namespaced logging that includes your class and calling member. fileciteturn1file29L13-L28
+Use `BasePlugin.Log(...)` for namespaced logging that includes your class and calling member. 
 
-### Host ↔ Plugin Communication
+### Host Plugin Communication
 
 Expose host callbacks to plugins using the `CallEventWrapper<T>`:
 
@@ -83,7 +83,7 @@ private void HelloWorld(IMyPlugin sender, EventArgs args) { /* ... */ }
 // In the plugin:
 HelloWorldHook.Call(this, EventArgs.Empty);
 ```
-The wrapper is a tiny struct that invokes a host‑provided `Action<T, EventArgs>`. fileciteturn1file32L6-L24
+The wrapper is a tiny struct that invokes a hostprovided `Action<T, EventArgs>`. 
 
 ---
 
@@ -95,15 +95,15 @@ The wrapper is a tiny struct that invokes a host‑provided `Action<T, EventArgs
 var registry = new PluginRegistry<IMyPlugin>();
 registry.InitializeLogger(); // can pass extra ILoggerProvider(s) if desired
 ```
-Logging is configured with `SimpleConsole` and a default minimum of `Debug`. fileciteturn1file24L9-L27
+Logging is configured with `SimpleConsole` and a default minimum of `Debug`. 
 
 ### 2) (Optional) Subscribe to plugin events
 
 ```csharp
 registry.PluginMounted += plugin =>
 {
-    // Provide host callbacks to the plugin here
-    plugin.HelloWorldHook = new CallEventWrapper<IMyPlugin> { Func = HelloWorld };
+ // Provide host callbacks to the plugin here
+ plugin.HelloWorldHook = new CallEventWrapper<IMyPlugin> { Func = HelloWorld };
 };
 ```
 
@@ -114,91 +114,91 @@ registry.PluginMounted += plugin =>
 registry.LoadPluginFolder(pathToPlugins);
 ```
 The registry:
-1. Loads all `*.dll` with a collectible `AssemblyLoadContext`. fileciteturn1file26L115-L140  
-2. Builds the dependency graph from `[PluginIdentity]` and `[PluginRequires]`. fileciteturn1file26L142-L154  
-3. Marks nodes `Loaded` when assemblies contain identifiable plugins. fileciteturn1file26L198-L211  
-4. Mounts/initializes/verify‑checks all ready plugins, then logs counts and results. fileciteturn1file26L156-L191
+1. Loads all `*.dll` with a collectible `AssemblyLoadContext`. 
+2. Builds the dependency graph from `[PluginIdentity]` and `[PluginRequires]`. 
+3. Marks nodes `Loaded` when assemblies contain identifiable plugins. 
+4. Mounts/initializes/verifychecks all ready plugins, then logs counts and results. 
 
-> **Demo:** The sample program wires `PluginMounted` and calls `LoadPluginFolder` with a hard‑coded path targeting `net9.0` demo builds. fileciteturn1file33L20-L33
+> **Demo:** The sample program wires `PluginMounted` and calls `LoadPluginFolder` with a hardcoded path targeting `net9.0` demo builds. 
 
 ### 4) Unload (dispose) when done
 
 ```csharp
 registry.Dispose();
 ```
-This clears mounted plugins and unloads every collectible `AssemblyLoadContext`, logging successes/failures. fileciteturn1file26L183-L219
+This clears mounted plugins and unloads every collectible `AssemblyLoadContext`, logging successes/failures. 
 
 ---
 
 ## Authoring a Plugin
 
-1. **Define an interface** (your plugin contract) that extends `IPlugin`. The demo uses `IDemoPlugin : IPlugin` and adds a `HelloWorldHook`. fileciteturn1file36L1-L9  
-2. **Implement the interface** in a concrete class that also derives from `BasePlugin` for convenient logging.  
-3. **Annotate the class** with `[PluginIdentity(...)]` and optional `[PluginRequires(...)]`. See the two demo plugins that depend on each other by ID. fileciteturn1file37L5-L26 fileciteturn1file35L5-L23  
+1. **Define an interface** (your plugin contract) that extends `IPlugin`. The demo uses `IDemoPlugin : IPlugin` and adds a `HelloWorldHook`. 
+2. **Implement the interface** in a concrete class that also derives from `BasePlugin` for convenient logging. 
+3. **Annotate the class** with `[PluginIdentity(...)]` and optional `[PluginRequires(...)]`. See the two demo plugins that depend on each other by ID. 
 4. **Build to a DLL** and place it where the host will scan.
 
 **Example (condensed)**
 
 ```csharp
 [PluginIdentity(
-    PluginType = typeof(DemoPluginImplementation),
-    Name = "Demo_plugin",
-    IdPath = "The_Ultimate_Demo_Plugin")]
+ PluginType = typeof(DemoPluginImplementation),
+ Name = "Demo_plugin",
+ IdPath = "The_Ultimate_Demo_Plugin")]
 [PluginRequires("the_ultimate_demo_plugin.demo_plugin_req")]
 public sealed class DemoPluginImplementation : BasePlugin, IDemoPlugin
 {
-    public CallEventWrapper<IDemoPlugin> HelloWorldHook { get; set; }
+ public CallEventWrapper<IDemoPlugin> HelloWorldHook { get; set; }
 
-    public bool OnMount() => true;
-    public void OnInitialized()
-    {
-        Log(LogLevel.Information, "Plugin 1 Initialized");
-        HelloWorldHook.Call(this, EventArgs.Empty);
-    }
-    public bool OnUnmount() => true;
-    public void OnDeinitialized() { }
+ public bool OnMount() => true;
+ public void OnInitialized()
+ {
+ Log(LogLevel.Information, "Plugin 1 Initialized");
+ HelloWorldHook.Call(this, EventArgs.Empty);
+ }
+ public bool OnUnmount() => true;
+ public void OnDeinitialized() { }
 }
 ```
 
 ---
 
-## Dependency Graph (What’s Happening Internally)
+## Dependency Graph (What's Happening Internally)
 
-- Nodes are the plugin IDs.  
-- Edges are the IDs listed in `[PluginRequires]`.  
-- A plugin is considered **ready** when all of its dependencies are in a non‑error state (`Loaded | Mounted | Initialized`). fileciteturn1file27L112-L129  
-- The registry iterates nodes to mount/initialize those not in `Unknown/Unloaded/Shutdown/Error`. fileciteturn1file26L168-L181
+- Nodes are the plugin IDs. 
+- Edges are the IDs listed in `[PluginRequires]`. 
+- A plugin is considered **ready** when all of its dependencies are in a nonerror state (`Loaded | Mounted | Initialized`). 
+- The registry iterates nodes to mount/initialize those not in `Unknown/Unloaded/Shutdown/Error`. 
 
-States tracked: `Unknown, Loaded, Mounted, Initialized, Shutdown, Unloaded, Error`. fileciteturn1file27L1-L12
+States tracked: `Unknown, Loaded, Mounted, Initialized, Shutdown, Unloaded, Error`. 
 
 ---
 
 ## Logging From Plugins
 
-Call `Log(level, message, args?)` from any `BasePlugin` method. The helper prefixes logs with your **class name** and the **calling member** for tidy tracing. fileciteturn1file29L13-L28
+Call `Log(level, message, args?)` from any `BasePlugin` method. The helper prefixes logs with your **class name** and the **calling member** for tidy tracing. 
 
 ```csharp
 Log(LogLevel.Information, "Connected to host with options: {0}", new object?[] { options });
 ```
 
-Initialize the shared logger once in the host via `registry.InitializeLogger(...)`. fileciteturn1file24L9-L36
+Initialize the shared logger once in the host via `registry.InitializeLogger(...)`. 
 
 ---
 
 ## Demo Layout (Quick Look)
 
-- **URegistry.Core**: registry, base plugin, attributes, dependency graph, ALC wrapper, logging. fileciteturn1file26L1-L18 fileciteturn1file28L10-L24  
-- **DemoPluginBridge**: `IDemoPlugin` interface used by host and plugins. fileciteturn1file36L1-L9  
-- **DemoPlugin / DemoPluginReqTest**: sample plugins showing identity, dependency, and host callback usage. fileciteturn1file37L5-L26 fileciteturn1file35L5-L23  
-- **URegistryDemo**: a simple console host loading `bin/Plugins/Debug/net9.0/`. fileciteturn1file33L26-L33
+- **URegistry.Core**: registry, base plugin, attributes, dependency graph, ALC wrapper, logging. 
+- **DemoPluginBridge**: `IDemoPlugin` interface used by host and plugins. 
+- **DemoPlugin / DemoPluginReqTest**: sample plugins showing identity, dependency, and host callback usage. 
+- **URegistryDemo**: a simple console host loading `bin/Plugins/Debug/net9.0/`. 
 
 ---
 
 ## Notes & Tips
 
-- **Dependency IDs must match** the generated `IdPath.Name` of the target plugin (lower‑case, spaces → `_`). fileciteturn1file30L65-L73  
-- **Verification (`Verify()`) is your last chance** to confirm the plugin is in a good state; return `true` to be marked ready. fileciteturn1file26L94-L106  
-- **PluginSettings** currently exists as a placeholder for future configuration. fileciteturn1file25L1-L7
+- **Dependency IDs must match** the generated `IdPath.Name` of the target plugin (lowercase, spaces -> `_`). 
+- **Verification (`Verify()`) is your last chance** to confirm the plugin is in a good state; return `true` to be marked ready. 
+- **PluginSettings** currently exists as a placeholder for future configuration. 
 
 ---
 
