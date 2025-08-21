@@ -1,4 +1,4 @@
-![URegistry Banner](https://github.com/Margoovian/URegistry/tree/main/res/URegistryBanner.png?raw=true)
+![URegistry Banner]([https://github.com/Margoovian/URegistry/tree/main/res/URegistryBanner.png?raw=true](https://github.com/Margoovian/URegistry/blob/main/res/URegistryBanner.png))
 
 # URegistry — A Reflection‑Driven Plugin Registry for .NET
 
