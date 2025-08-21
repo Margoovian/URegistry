@@ -28,5 +28,11 @@ namespace URegistry.Interfaces
         /// </summary>
         public void OnDeinitialized();
 
+        /// <summary>
+        /// Used for custom verification of the plugin, such as checking if all dependencies are met, etc.
+        /// </summary>
+        /// <returns>True if verification was successful</returns>
+        public bool Verify() { return true; }
+
     }
 }

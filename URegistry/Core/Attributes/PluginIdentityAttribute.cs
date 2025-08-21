@@ -1,15 +1,13 @@
-﻿
-
-namespace URegistry.Core
+﻿namespace URegistry.Core.Attributes
 {
 
-    [System.AttributeUsage(
-        System.AttributeTargets.Class |
-        System.AttributeTargets.Struct,
+    [AttributeUsage(
+        AttributeTargets.Class |
+        AttributeTargets.Struct,
         AllowMultiple = true
         )  // Multiuse attribute.
 ]
-    public class PluginIdentityAttribute : System.Attribute
+    public class PluginIdentityAttribute : Attribute
     {
 
         /// <summary>
